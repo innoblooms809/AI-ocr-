@@ -1,0 +1,12 @@
+torch
+torchvision
+transformers>=4.45.0
+pillow
+streamlit
+fastapi
+uvicorn
+python-dotenv
+einops
+accelerate
+sentencepiece
+numpy
