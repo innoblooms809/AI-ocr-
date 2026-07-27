@@ -10,3 +10,4 @@ einops
 accelerate
 sentencepiece
 numpy
+chandra-ocr[hf]

@@ -6,13 +6,15 @@ import importlib
 
 # Force reload models and predictor to prevent caching errors in Streamlit
 import app.models.paddleocr_vl.model
+import app.models.chandra.model
 import app.ocr.loader
 import app.ocr.predictor
 importlib.reload(app.models.paddleocr_vl.model)
+importlib.reload(app.models.chandra.model)
 importlib.reload(app.ocr.loader)
 importlib.reload(app.ocr.predictor)
 
-from app.ocr.loader import list_local_models
+from app.ocr.loader import list_local_models, MODEL_REGISTRY
 from app.ocr.predictor import run_ocr_pipeline, clear_model_cache
 from app.ocr.parser import parse_ocr_text
 from app.ocr.postprocess import clean_markdown
@@ -84,7 +86,7 @@ else:
 # 2. Select Model Adapter Type
 adapter_type = st.sidebar.selectbox(
     "Model Adapter / Class",
-    options=["paddleocr_vl"],
+    options=list(MODEL_REGISTRY.keys()),
     help="Determines the tokenizer and generation format code mapping."
 )
 
