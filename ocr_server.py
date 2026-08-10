@@ -21,9 +21,21 @@ import io
 import re
 import time
 import logging
+import threading
 import unicodedata
 from typing import List, Dict, Any
 from contextlib import asynccontextmanager
+from concurrent.futures import ThreadPoolExecutor
+
+# ── Dual Intel Xeon Platinum 8173M (56 Cores / 112 Threads / 256GB RAM) Optimizations ───
+CPU_COUNT = os.cpu_count() or 56
+OPTIMAL_TORCH_THREADS = min(max(CPU_COUNT // 4, 8), 16)
+
+# Set Intel MKL & OpenMP thread affinity before PyTorch initialization
+os.environ["MKL_NUM_THREADS"] = str(OPTIMAL_TORCH_THREADS)
+os.environ["OMP_NUM_THREADS"] = str(OPTIMAL_TORCH_THREADS)
+os.environ["KMP_AFFINITY"] = "granularity=fine,compact,1,0"
+os.environ["KMP_BLOCKTIME"] = "1"
 
 # Ensure project root is on sys.path
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -38,6 +50,17 @@ import torch
 import fitz  # PyMuPDF
 from PIL import Image, ImageEnhance, ImageOps
 from transformers import AutoModelForImageTextToText, AutoProcessor
+
+# PyTorch Model Mutex for CPU/CUDA Thread-Safety
+_ocr_model_lock = threading.Lock()
+
+# Configure PyTorch CPU Intra-Op Thread Engine for AVX-512
+torch.set_num_threads(OPTIMAL_TORCH_THREADS)
+if hasattr(torch, "set_num_interop_threads"):
+    try:
+        torch.set_num_interop_threads(min(CPU_COUNT // 8, 4))
+    except Exception:
+        pass
 
 # ── Chandra OCR imports ──
 try:
@@ -179,7 +202,8 @@ def run_batch_ocr(images: List[Image.Image]) -> List[str]:
     batch = [BatchInputItem(image=img, prompt_type="ocr_layout") for img in preprocessed]
 
     with torch.no_grad():
-        results = generate_hf(batch, _model)
+        with _ocr_model_lock:
+            results = generate_hf(batch, _model)
 
     if not results:
         raise RuntimeError("Chandra OCR returned no results.")

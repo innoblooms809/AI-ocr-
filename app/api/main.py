@@ -7,17 +7,32 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(
 import uvicorn
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app.ocr.predictor import run_ocr_pipeline
+from contextlib import asynccontextmanager
+from app.ocr.predictor import run_ocr_pipeline, get_cached_model
 from app.ocr.parser import parse_ocr_text
 from app.ocr.postprocess import clean_markdown
 from app.extraction.question_extractor import extract_questions
 from app.extraction.answer_extractor import extract_answers
 from app.config import settings
+from app.utils.logger import setup_logger
+
+logger = setup_logger("api_main")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info(f"🚀 Pre-loading default model '{settings.DEFAULT_MODEL_NAME}' at startup...")
+    try:
+        get_cached_model(settings.DEFAULT_MODEL_NAME, settings.DEFAULT_MODEL_PATH, settings.DEVICE)
+        logger.info("✅ Default model weights loaded successfully into memory.")
+    except Exception as e:
+        logger.warning(f"⚠️ Startup model pre-loading deferred: {e}. Model will load on first /predict request.")
+    yield
 
 app = FastAPI(
     title="Modular OCR API",
     description="FastAPI service for document extraction using PaddleOCR-VL and other VLMs",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # CORS
