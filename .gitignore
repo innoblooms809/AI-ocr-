@@ -28,7 +28,6 @@ share/python-wheels/
 venv/
 .venv/
 env/
-.env
 
 # Model weights and cache files (since they can be huge)
 models/*/model.safetensors
