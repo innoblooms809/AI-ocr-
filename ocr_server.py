@@ -180,14 +180,26 @@ def load_model():
 
     logger.info(f"Loading Chandra OCR-2 from: {path} (device={device})")
 
-    _model = AutoModelForImageTextToText.from_pretrained(
-        path, torch_dtype=dtype, device_map=device_map,
-    )
-    _model.eval()
+    try:
+        _model = AutoModelForImageTextToText.from_pretrained(
+            path, torch_dtype=dtype, device_map=device_map,
+        )
+        _model.eval()
 
-    _processor = AutoProcessor.from_pretrained(path)
-    _processor.tokenizer.padding_side = "left"
-    _model.processor = _processor
+        _processor = AutoProcessor.from_pretrained(path)
+        _processor.tokenizer.padding_side = "left"
+        _model.processor = _processor
+    except Exception as err:
+        logger.warning(f"⚠️ Local model/processor load failed from '{path}': {err}. Falling back to HuggingFace Hub: '{FALLBACK_HF}'")
+        path = FALLBACK_HF
+        _model = AutoModelForImageTextToText.from_pretrained(
+            path, torch_dtype=dtype, device_map=device_map,
+        )
+        _model.eval()
+
+        _processor = AutoProcessor.from_pretrained(path)
+        _processor.tokenizer.padding_side = "left"
+        _model.processor = _processor
 
     logger.info("✅ Chandra OCR-2 model loaded successfully.")
 
