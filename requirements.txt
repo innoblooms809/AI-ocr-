@@ -11,3 +11,5 @@ accelerate
 sentencepiece
 numpy
 chandra-ocr[hf]
+PyMuPDF
+requests
