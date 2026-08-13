@@ -47,5 +47,9 @@ models/PaddleOCR-VL/tokenizer.model
 logs/
 *.log
 
+# Environment variables
+.env
+.env.*
+
 # Streamlit config
 .streamlit/
