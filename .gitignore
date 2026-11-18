@@ -34,9 +34,6 @@ models/*/model.safetensors
 models/*/pytorch_model.bin
 models/*/.cache/
 model_cache/
-models/PaddleOCR-VL/PP-DocLayoutV2/inference.pdiparams
-models/PaddleOCR-VL/PP-DocLayoutV2/inference.pdmodel
-models/PaddleOCR-VL/tokenizer.model
 
 
 # IDE files
@@ -50,6 +47,3 @@ logs/
 # Environment variables
 .env
 .env.*
-
-# Streamlit config
-.streamlit/

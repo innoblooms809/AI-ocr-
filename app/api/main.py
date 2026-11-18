@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Modular OCR API",
-    description="FastAPI service for document extraction using PaddleOCR-VL and other VLMs",
+    description="FastAPI service for document extraction using Chandra OCR-2",
     version="1.0.0",
     lifespan=lifespan
 )

@@ -22,11 +22,11 @@ def main():
         print(f"- {m['name']} located at {m['path']}")
         
     if not models:
-        print("No models found in models/ directory. Make sure models/PaddleOCR-VL exists.")
+        print("No models found in models/ directory. Make sure models/chandra-ocr-2 exists.")
         sys.exit(0)
-        
+
     model_info = models[0]
-    print(f"\nTesting model: {model_info['name']} using type: paddleocr_vl")
+    print(f"\nTesting model: {model_info['name']} using type: chandra")
     
     # Create a simple white test image
     os.makedirs("tests", exist_ok=True)
@@ -40,7 +40,7 @@ def main():
         print(f"Running prediction pipeline on dummy image using {device}...")
         raw_output = run_ocr_pipeline(
             image_source=test_img_path,
-            adapter_type="paddleocr_vl",
+            adapter_type="chandra",
             model_path=model_info["path"],
             task="ocr",
             device=device,

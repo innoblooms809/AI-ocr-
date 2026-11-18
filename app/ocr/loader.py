@@ -1,7 +1,6 @@
 import os
 from typing import Dict, Type, List
 from app.models.base_model import BaseOCRModel
-from app.models.paddleocr_vl.model import PaddleOCRVLModel
 from app.models.chandra.model import ChandraOCRModel
 from app.utils.logger import setup_logger
 
@@ -9,7 +8,6 @@ logger = setup_logger("model_loader")
 
 # Registry mapping model architecture/adapter types to classes
 MODEL_REGISTRY: Dict[str, Type[BaseOCRModel]] = {
-    "paddleocr_vl": PaddleOCRVLModel,
     "chandra": ChandraOCRModel,
 }
 
