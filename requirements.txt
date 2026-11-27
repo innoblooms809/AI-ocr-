@@ -12,3 +12,5 @@ numpy
 chandra-ocr[hf]
 PyMuPDF
 requests
+# LangSmith tracing: agent addressing (LANGSMITH_AGENT_ID / _ENVIRONMENT) needs 0.15+
+langsmith>=0.15.0

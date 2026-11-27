@@ -47,3 +47,6 @@ logs/
 # Environment variables
 .env
 .env.*
+
+# Local secrets (LangSmith key etc.) — never commit
+.env.local
